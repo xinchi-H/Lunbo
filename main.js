@@ -8,20 +8,42 @@ let $lastCopy = $images.eq($images.length - 1).clone(true)
 $slides.append($firstCopy)
 $slides.prepend($lastCopy)
 //初始位置
-$slides.css({ transform: 'translateX(-600px)' })
+$slides.css({transform: 'translateX(-600px)'})
+
 //监听buttons
 $('#buttons').on('click', 'button', function (e) {
     let $button = $(e.currentTarget)
     let index = $button.index()
     goToSlide(index)
 })
+
+//给controls加节流
+function clickControl(fn, operation) {
+    let canUse = true
+    return function () {
+        if (canUse) {
+            if (operation === "previous") {
+                fn.call(this, current - 1)
+            }else if(operation === "next"){
+                fn.call(this, current + 1)
+            }
+            canUse = false
+            setTimeout(() => canUse = true, 1500)
+        }
+    }
+}
+
+let clickPrevious = clickControl(goToSlide,"previous")
+let clickNext = clickControl(goToSlide,"next")
+
 //监听controls
 $(previous).on('click', function () {
-    goToSlide(current - 1)
+    clickPrevious()
 })
 $(next).on('click', function () {
-    goToSlide(current + 1)
+    clickNext()
 })
+
 //图片切换
 function goToSlide(index) {
     if (index > $buttons.length - 1) {
@@ -31,24 +53,25 @@ function goToSlide(index) {
     }
     if (current === $buttons.length - 1 && index === 0) {
         // 最后一张到第一张
-        $slides.css({ transform: `translateX(${-($buttons.length + 1) * 600}px)` })
+        $slides.css({transform: `translateX(${-($buttons.length + 1) * 600}px)`})
             .one('transitionend', function () {
                 $slides.hide()
                 $slides.offset()
-                $slides.css({ transform: `translateX(${-(index + 1) * 600}px)` }).show()
+                $slides.css({transform: `translateX(${-(index + 1) * 600}px)`}).show()
             })
     } else if (current === 0 && index === $buttons.length - 1) {
         // 第一张到最后一张
-        $slides.css({ transform: `translateX(0px)` })
+        $slides.css({transform: `translateX(0px)`})
             .one('transitionend', function () {
                 $slides.hide().offset()
-                $slides.css({ transform: `translateX(${-(index + 1) * 600}px)` }).show()
+                $slides.css({transform: `translateX(${-(index + 1) * 600}px)`}).show()
             })
     } else {
-        $slides.css({ transform: `translateX(${- (index + 1) * 600}px)` })
+        $slides.css({transform: `translateX(${-(index + 1) * 600}px)`})
     }
     current = index
 }
+
 //设置定时器
 let timer = setInterval(function () {
     goToSlide(current + 1)
@@ -68,4 +91,5 @@ document.addEventListener('visibilitychange', function (e) {
         timer = setInterval(function () {
             goToSlide(current + 1)
         }, 3000)
-    }})
+    }
+})
