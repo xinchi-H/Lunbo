@@ -2,6 +2,7 @@ let $buttons = $('#buttons>button')
 let $slides = $('#slides')
 let $images = $slides.children('img')
 let current = 0
+let operation = ""
 //复制第一张和最后一张
 let $firstCopy = $images.eq(0).clone(true)
 let $lastCopy = $images.eq($images.length - 1).clone(true)
@@ -18,7 +19,7 @@ $('#buttons').on('click', 'button', function (e) {
 })
 
 //给controls加节流
-function clickControl(fn, operation) {
+function clickControls(fn) {
     let canUse = true
     return function () {
         if (canUse) {
@@ -33,15 +34,16 @@ function clickControl(fn, operation) {
     }
 }
 
-let clickPrevious = clickControl(goToSlide,"previous")
-let clickNext = clickControl(goToSlide,"next")
+let clickControl = clickControls(goToSlide,)
 
 //监听controls
 $(previous).on('click', function () {
-    clickPrevious()
+    operation = "previous"
+    clickControl()
 })
 $(next).on('click', function () {
-    clickNext()
+    operation = "next"
+    clickControl()
 })
 
 //图片切换
