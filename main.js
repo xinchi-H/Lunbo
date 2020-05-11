@@ -34,7 +34,7 @@ function clickControls(fn) {
     }
 }
 
-let clickControl = clickControls(goToSlide,)
+let clickControl = clickControls(goToSlide)
 
 //监听controls
 $(previous).on('click', function () {
